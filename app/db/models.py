@@ -21,3 +21,5 @@ class LearnedResponse(Base):
 
     question = Column(String, primary_key=True, index=True)
     answer = Column(String)
+
+

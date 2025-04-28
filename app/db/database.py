@@ -42,6 +42,23 @@ def initialize_static_facts():
         StaticFact(pattern="what is machine learning", response="Machine learning is giving computers the ability to learn without being explicitly programmed."),
         StaticFact(pattern="tell me about deep learning", response="Deep learning is a subset of machine learning based on neural networks with representation learning."),
         StaticFact(pattern="help", response="I am here to help you with banking queries, general questions, and small talk!"),
+
+        # Add these greeting entries at the top
+        StaticFact(pattern="greeting", response="Hello! How can I assist you today?"),
+        StaticFact(pattern="hi", response="Hi there! What can I do for you?"),
+        StaticFact(pattern="hello", response="Hello there! What can I do for you?"),
+        StaticFact(pattern="hey", response="Hey! How can I help you out?"),
+        StaticFact(pattern="good morning", response="Good morning! How may I help?"),
+        StaticFact(pattern="good afternoon", response="Good afternoon! What can I do for you?"),
+        StaticFact(pattern="good evening", response="Good evening! What brings you here?"),
+
+        # Your existing entries follow
+        StaticFact(pattern="hi", response="Hello! How can I assist you today?"),
+        StaticFact(pattern="hello", response="Hello there! What can I do for you?"),
+        StaticFact(pattern="good morning", response="Good morning! How may I help?"),
+        StaticFact(pattern="good afternoon", response="Good afternoon! How can I assist?"),
+        StaticFact(pattern="good evening", response="Good evening! What brings you here?"),
+        StaticFact(pattern="bye", response="Goodbye! Have a nice day ahead."),
     ]
 
     for entry in static_entries:
