@@ -69,13 +69,19 @@ This project implements a three‑tier chatbot using FastAPI, featuring:
 
 ### 🐳 Docker Deployment
 
-You can build and run the backend in a Docker container:
+You can build and run the backend in a Docker container, with optional training steps:
 
 ```bash
-# Build the Docker image (replace tag as desired)
+# Build the Docker image (default skips training)
 docker build -t aichatbot-backend .
 
-# Run the container (map port 8000, mount history.json for persistence)
+# To include Transformer and/or ML training:
+docker build \
+  --build-arg TRAIN_TRANSFORMER=true \
+  --build-arg TRAIN_ML=true \
+  -t aichatbot-backend:full .
+
+# Run the container, mapping port 8000 and mounting history.json for persistence:
 docker run -d --name aichatbot \
   -p 8000:8000 \
   -e SESSION_SECRET=your_secret \
@@ -83,18 +89,12 @@ docker run -d --name aichatbot \
   -v $(pwd)/history.json:/app/history.json \
   aichatbot-backend
 
-# Stream logs
+# View logs
 docker logs -f aichatbot
 
-# Stop and remove
+# Stop and remove container
 docker stop aichatbot && docker rm aichatbot
 ```
-
-
-   - HTTP docs: http://127.0.0.1:8000/docs
-   - Root welcome: http://127.0.0.1:8000/
-
----
 
 ## 🔧 Configuration & Environment
 
@@ -182,6 +182,45 @@ wscat -c "ws://127.0.0.1:8000/chat/ws?model=transformer"
 Any changes to `intents.json` are auto‑reloaded at runtime (via `watchdog`). No server restart needed.
 
 ---
+
+## 🛠 IDE Setup
+
+For an optimal development experience, we recommend using one of the following:
+
+- **VS Code** (free)
+  1. Install [Python extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python).
+  2. Enable **Pylance** for type checking.
+  3. Use **Black** or **Prettier** for code formatting.
+  4. Set up a **launch configuration** for debugging:
+// .vscode/launch.json
+     ```json
+     
+     {
+       "version": "0.2.0",
+       "configurations": [
+         {
+           "name": "Python: Uvicorn",
+           "type": "python",
+           "request": "launch",
+           "module": "uvicorn",
+           "args": ["app.main:app", "--reload"],
+           "jinja": true
+         }
+       ]
+     }
+     ```
+
+- **PyCharm** (Community or Professional)
+  1. Open the project folder.
+  2. Configure a Python 3.10+ interpreter with your virtualenv.
+  3. Install required packages via `requirements.txt`.
+  4. Create a **Run/Debug configuration**:
+     - **Script path**: `uvicorn`
+     - **Parameters**: `app.main:app --reload`
+     - **Python interpreter**: your venv
+
+---
+
 
 ## 📁 Project Structure
 

@@ -1,33 +1,47 @@
-# Stage 1: clone + pull LFS
-FROM alpine/git AS fetcher
-RUN apk add --no-cache git-lfs
-WORKDIR /repo
+# Dockerfile for AIChatBotBackendFastApi
 
-# Use build-args for private repos if needed:
-ARG GIT_URL="https://github.com/your-org/your-repo.git"
-ARG GIT_REF="HEAD"
-RUN git clone "$GIT_URL" . \
- && git -c protocol.version=2 lfs install \
- && git lfs pull --include="saved_intent_model/*" \
- && git checkout "$GIT_REF"
-
-# Stage 2: build your Python app
-FROM python:3.12-slim
+# 1️⃣ Base image
+FROM python:3.12-slim AS base
 WORKDIR /app
 
-# Copy only the model directory from the fetcher
-COPY --from=fetcher /repo/saved_intent_model ./saved_intent_model
+# 2️⃣ Install system dependencies
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       git \
+       curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install deps
+# 3️⃣ Install Python dependencies
 COPY requirements.txt .
 RUN pip install --upgrade pip \
- && pip install -r requirements.txt
+    && pip install -r requirements.txt
 
-# Copy the rest of your code
+# 4️⃣ Copy application code
 COPY . .
 
-# Download NLTK data
+# 5️⃣ Download NLTK data
 RUN python -m nltk.downloader punkt
 
+# 6️⃣ Build-time training flags (default: skip heavy training)
+ARG TRAIN_TRANSFORMER=false
+ARG TRAIN_ML=false
+
+# 7️⃣ Conditionally train Transformer model
+RUN if [ "$TRAIN_TRANSFORMER" = "true" ]; then \
+        echo "🔧 Training Transformer model..." && \
+        python training_transformer.py; \
+    else \
+        echo "🚫 Skipping Transformer training"; \
+    fi
+
+# 8️⃣ Conditionally train ML model
+RUN if [ "$TRAIN_ML" = "true" ]; then \
+        echo "🔧 Training legacy ML model..." && \
+        python training.py; \
+    else \
+        echo "🚫 Skipping ML training"; \
+    fi
+
+# 9️⃣ Expose port and default command
 EXPOSE 8000
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
