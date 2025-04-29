@@ -3,7 +3,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
-from app.db.models import StaticFact
+from app.db.models import StaticFact, DynamicFact
 from app.db.base import Base
 
 DATABASE_URL = "sqlite:///./knowledge_base.db"  # SQLite database file
@@ -64,6 +64,35 @@ def initialize_static_facts():
     for entry in static_entries:
         existing = db.query(StaticFact).filter_by(pattern=entry.pattern).first()
         if not existing:
+            db.add(entry)
+
+    db.commit()
+    db.close()
+
+def initialize_dynamic_facts():
+    """
+    Seed the dynamic_facts table with initial entries if they don't exist.
+    """
+    db = SessionLocal()
+    dynamic_entries = [
+        DynamicFact(fact_type="interest_rate_savings", fact_value="3.5% per annum"),
+        DynamicFact(fact_type="fixed_deposit_rates",  fact_value="4.0% (6 mo), 4.5% (12 mo), 5.0% (24 mo)"),
+        DynamicFact(fact_type="branch_hours",         fact_value="Mon–Fri 9 AM–4 PM; Sat 9 AM–1 PM"),
+        DynamicFact(fact_type="loan_processing_time", fact_value="Home loan: 5–7 business days; Personal: 2–3"),
+        # If you want the ATM list here, you could store JSON-encoded strings:
+        DynamicFact(
+            fact_type="atm_locations",
+            fact_value='[{"city":"Colombo 03","address":"6/4 Price St."},{"city":"Kandy","address":"52 Temple Rd."}]'
+        ),
+        DynamicFact(
+            fact_type="credit_card_offers",
+            fact_value="Visa Platinum: 1.5% cashback; Mastercard Gold: 2% reward points"
+        ),
+    ]
+
+    for entry in dynamic_entries:
+        exists = db.query(DynamicFact).filter_by(fact_type=entry.fact_type).first()
+        if not exists:
             db.add(entry)
 
     db.commit()

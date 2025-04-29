@@ -4,3 +4,4 @@ sqlalchemy
 torch
 nltk
 numpy
+transformers

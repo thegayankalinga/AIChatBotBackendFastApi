@@ -18,18 +18,14 @@ app.add_middleware(
 
 # Initialize Database
 Base.metadata.create_all(bind=engine)
-
 initialize_static_facts()
-# Include Routes
-app.include_router(chat.router)
-app.include_router(teachme.router)
-app.include_router(admin.router)
+initialize_dynamic_facts()
+
+# Mount each router under its own path so Swagger can discover them
+app.include_router(chat.router,    prefix="/chat",    tags=["Chat"])
+app.include_router(teachme.router, prefix="/teachme", tags=["TeachMe"])
+app.include_router(admin.router,   prefix="/admin",   tags=["Admin"])
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
-
-
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+    return {"message": "Welcome to AI Chatbot!"}

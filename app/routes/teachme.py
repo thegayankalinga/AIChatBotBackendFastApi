@@ -12,18 +12,30 @@ class TeachRequest(BaseModel):
     question: str
     answer: str
 
-@router.post("/techme")
+
+@router.get("/", summary="List all user-taught Q&A")
+async def list_taught():
+    db = SessionLocal()
+    all_ = db.query(LearnedResponse).all()
+    db.close()
+    return success_response("All learned responses", {
+        "items": [{"question": x.question, "answer": x.answer} for x in all_]
+    })
+
+@router.post("/", summary="Teach the bot a new question/answer pair")
 async def teach_bot(request: TeachRequest):
     db = SessionLocal()
+    q = request.question.strip().lower()
+    a = request.answer.strip()
     try:
         # Check if the question already exists
-        existing = db.query(LearnedResponse).filter_by(question=request.question.lower()).first()
+        existing = db.query(LearnedResponse).filter_by(question=q).first()
         if existing:
             return error_response("This question has already been taught.")
 
         new_fact = LearnedResponse(
-            question=request.question.lower(),
-            answer=request.answer
+            question=q,
+            answer=a
         )
         db.add(new_fact)
         db.commit()
@@ -33,3 +45,4 @@ async def teach_bot(request: TeachRequest):
         return error_response(f"An error occurred: {str(e)}")
     finally:
         db.close()
+
