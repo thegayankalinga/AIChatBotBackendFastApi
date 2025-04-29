@@ -167,7 +167,7 @@ wscat -c "ws://127.0.0.1:8000/chat/ws?model=transformer"
 ```
 bash
 # install wscat if needed
-npm install -g wscat
+`npm install -g wscat`
 
 # connect
 wscat -c "ws://127.0.0.1:8000/chat/ws?model=transformer"
