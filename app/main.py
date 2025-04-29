@@ -1,23 +1,40 @@
-from fastapi import FastAPI, requests
+import os
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI
+from starlette.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
+from app.context_store import load_history, save_history
 from app.db.database import Base, engine, initialize_static_facts, initialize_dynamic_facts
 from app.routes import chat, teachme, admin
 
-app = FastAPI()
-app.add_middleware(SessionMiddleware, secret_key="fastapi-local-dev-secret-ai-coursework-cw2")
+HISTORY_FILE = os.path.join(os.path.dirname(__file__), "../history.json")
+SECRET_KEY   = "fastapi-local-dev-secret-ai-coursework-cw2"
+origins = ["http://localhost:5173"]
+
+middleware = [
+    Middleware(CORSMiddleware, allow_origins=origins, allow_credentials=True, allow_methods=["*"], allow_headers=["*"]),
+    Middleware(SessionMiddleware, secret_key=SECRET_KEY),
+]
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # --- startup logic ---
+    load_history(HISTORY_FILE)
+    yield
+    # --- shutdown logic ---
+    save_history(HISTORY_FILE)
+
+app = FastAPI(
+    lifespan=lifespan,
+    middleware=middleware)
+    # type: ignore[arg-type]
+
 
 # CORS Settings
 origins = ["http://localhost:5173"]  # Frontend URL
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # Initialize Database
 Base.metadata.create_all(bind=engine)
