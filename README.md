@@ -43,11 +43,11 @@ This project implements a three‑tier chatbot using FastAPI, featuring:
 4. **Initialize database** (SQLite by default)
    ```bash
    python - << 'EOF'
-from app.db.database import Base, engine, initialize_static_facts, initialize_dynamic_facts
-Base.metadata.create_all(bind=engine)
-initialize_static_facts()
-initialize_dynamic_facts()
-EOF
+   from app.db.database import Base, engine, initialize_static_facts, initialize_dynamic_facts
+   Base.metadata.create_all(bind=engine)
+   initialize_static_facts()
+   initialize_dynamic_facts()
+   EOF
    ```
 
 5. **Train the models**
