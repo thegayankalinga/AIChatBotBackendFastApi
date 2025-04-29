@@ -170,6 +170,7 @@ bash
 `npm install -g wscat`
 
 # connect
+```
 wscat -c "ws://127.0.0.1:8000/chat/ws?model=transformer"
 > {"message":"Hello"}
 ```
