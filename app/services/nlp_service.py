@@ -1,5 +1,8 @@
 import random
 import json
+
+from sqlalchemy.orm import Session
+
 from app.utils.model_selector import predict_intent
 from app.services.db_service import (
     get_static_response,
@@ -14,7 +17,9 @@ with open("intents.json", "r") as f:
 CONFIDENCE_THRESHOLD = 0.10  # Lowered from 0.35
 
 
-def generate_response(user_input: str, model_type: str = "transformer") -> str:
+def generate_response(
+        user_input: str,
+        model_type: str = "transformer") -> str:
     tag, confidence = predict_intent(user_input, model_type=model_type)
     print(f"PREDICTED: tag={tag}, confidence={confidence:.2f}, model={model_type}")
 

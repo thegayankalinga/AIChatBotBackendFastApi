@@ -1,5 +1,5 @@
 # app/db/database.py
-from typing import Any, Generator
+from typing import Generator
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -14,16 +14,16 @@ engine = create_engine(
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-def get_db() -> Generator[Session, Any, None]:
-    """
-    Dependency-injected session generator.
-    Yields a SQLAlchemy Session for each request.
-    """
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+# def get_db() -> Generator[Session, None, None]:
+#     """
+#     Dependency-injected session generator.
+#     Yields a SQLAlchemy Session for each request.
+#     """
+#     db = SessionLocal()
+#     try:
+#         yield db
+#     finally:
+#         db.close()
 
 def initialize_static_facts():
     db = Session(bind=engine)
