@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.db.database import Base, engine, initialize_static_facts
+from app.db.database import Base, engine, initialize_static_facts, initialize_dynamic_facts
 from app.routes import chat, teachme, admin
 
 app = FastAPI()
