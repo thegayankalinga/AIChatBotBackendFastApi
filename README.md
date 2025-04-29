@@ -65,7 +65,7 @@ This project implements a three‑tier chatbot using FastAPI, featuring:
 6. **Run the server**
    ```bash
     uvicorn app.main:app --reload
-```
+    ```
 
 ### 🐳 Docker Deployment
 
