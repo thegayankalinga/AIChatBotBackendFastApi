@@ -1,9 +1,12 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, requests
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
+
 from app.db.database import Base, engine, initialize_static_facts, initialize_dynamic_facts
 from app.routes import chat, teachme, admin
 
 app = FastAPI()
+app.add_middleware(SessionMiddleware, secret_key="fastapi-local-dev-secret-ai-coursework-cw2")
 
 # CORS Settings
 origins = ["http://localhost:5173"]  # Frontend URL
