@@ -9,6 +9,8 @@ from starlette.middleware.sessions import SessionMiddleware
 from app.context_store import load_history, save_history
 from app.db.database import Base, engine, initialize_static_facts, initialize_dynamic_facts
 from app.routes import chat, teachme, admin
+from app.routes.chat_ws import router as chat_ws_router
+
 
 HISTORY_FILE = os.path.join(os.path.dirname(__file__), "../history.json")
 SECRET_KEY   = "fastapi-local-dev-secret-ai-coursework-cw2"
@@ -31,8 +33,7 @@ app = FastAPI(
     lifespan=lifespan,
     middleware=middleware)
     # type: ignore[arg-type]
-
-
+app.include_router(chat_ws_router, prefix="", tags=["Chat WS"])
 # CORS Settings
 origins = ["http://localhost:5173"]  # Frontend URL
 
