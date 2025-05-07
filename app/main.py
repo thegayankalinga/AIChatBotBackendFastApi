@@ -14,7 +14,7 @@ from app.routes.chat_ws import router as chat_ws_router
 
 HISTORY_FILE = os.path.join(os.path.dirname(__file__), "../history.json")
 SECRET_KEY   = "fastapi-local-dev-secret-ai-coursework-cw2"
-origins = ["http://localhost:5173"]
+origins = ["http://localhost:5173",   "https://ai-chatbot-frontend-lrpu.onrender.com"]
 
 middleware = [
     Middleware(CORSMiddleware, allow_origins=origins, allow_credentials=True, allow_methods=["*"], allow_headers=["*"]),
